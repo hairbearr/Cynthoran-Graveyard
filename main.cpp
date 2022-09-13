@@ -6,22 +6,24 @@ class Character
     public : 
         Vector2 GetWorldPosition() { return worldPosition; }
         void SetScreenPosition(int windowWidth, int windowHeight);
+        void SetTextureScale(float textureScale);
         void Tick(float deltaTime);
-
 
     private :
         Texture2D
             texture { LoadTexture("characters/Player/Idle_Down.png") } ,
             idle { LoadTexture("characters/Player/Idle_Down.png") },
-            run { LoadTexture("characters/Player/Walk_Right.png") },
-            runUp { LoadTexture("characters/Player/Walk_Up.png") },
-            runDown { LoadTexture("characters/Player/Walk_Down.png") };
-        Vector2 screenPosition, worldPosition;
-        float rightLeft{1.f}, runningTime{};
+            walk { LoadTexture("characters/Player/Walk_Right.png") },
+            walkUp { LoadTexture("characters/Player/Walk_Up.png") },
+            walkDown { LoadTexture("characters/Player/Walk_Down.png") },
+            run { LoadTexture("characters/Player/Run_Right.png") },
+            runUp { LoadTexture("characters/Player/Run_Up.png") },
+            runDown { LoadTexture("characters/Player/Run_Down.png") };
+        Vector2 screenPosition{}, worldPosition{};
+        float rightLeft{1.f}, runningTime{}, scale{};
         int frame{};
         const int maxFrames{6};
-        float updateTime{1.f/12.f}, idleUpdateTime{1.f};
-        const float movementSpeed{4.f};
+        float updateTime{1.f/12.f}, idleUpdateTime{1.f}, movementSpeed{2.75f}, sprintSpeed{2.f};
 };
 
 void Character::SetScreenPosition(int windowWidth, int windowHeight)
@@ -33,9 +35,14 @@ void Character::SetScreenPosition(int windowWidth, int windowHeight)
     };
 }
 
+void Character::SetTextureScale(float textureScale)
+{
+    scale = textureScale;
+}
+
 void Character::Tick(float deltaTime)
 {
-     Vector2 direction{};
+        Vector2 direction{};
         if(IsKeyDown(KEY_W)) { direction.y -= 1.0; } // up
         if(IsKeyDown(KEY_A)) { direction.x -= 1.0; } // left
         if(IsKeyDown(KEY_S)) { direction.y += 1.0; } // down
@@ -53,9 +60,23 @@ void Character::Tick(float deltaTime)
 
             updateTime = 1.f/12.f;
 
-            if(direction.y < 0 ) { texture = runUp; }
-            else if (direction.y > 0) { texture = runDown; }
-            else { texture = run; }
+            if(IsKeyDown(KEY_LEFT_SHIFT))
+            {
+                movementSpeed = 2.75 + sprintSpeed;
+                updateTime = 1.f/6.f;
+                if(direction.y < 0 ) { texture = runUp; }
+                else if (direction.y > 0) { texture = runDown; }
+                else { texture = run; }
+            }
+            else
+            {
+                updateTime = 1.f/12.f;
+                movementSpeed = 2.75;
+                if(direction.y < 0 ) { texture = walkUp; }
+                else if (direction.y > 0) { texture = walkDown; }
+                else { texture = walk; }
+            }
+            
         }
         else
         {
@@ -71,6 +92,11 @@ void Character::Tick(float deltaTime)
             runningTime = 0.f;
             if(frame>maxFrames) frame = 0;
         }
+
+        // draw the player character
+        Rectangle source{frame * (float)texture.width/6.f, 0.f, rightLeft * (float)texture.width/6.f, (float)texture.height};
+        Rectangle destination{screenPosition.x, screenPosition.y, scale * (float)texture.width/6.0f, scale * (float)texture.height};
+        DrawTexturePro(texture, source, destination, Vector2{}, 0.f, WHITE);
 }
 
 int main()
@@ -83,26 +109,9 @@ int main()
     Texture2D map = LoadTexture("tilemaps/Graveyard.png");
     Vector2 mapPosition{0.0,0.0};
 
-    Texture2D player = LoadTexture("characters/Player/Idle_Down.png");
-    Vector2 playerPosition{ (float)windowWidth/2.0f - 4.0f * (0.5f * (float)player.width/6.0f), (float)windowHeight/2.0f - 4.0f * (0.5f * (float)player.height)};
-    Texture2D playerIdle = LoadTexture("characters/Player/Idle_Down.png");
-    Texture2D playerRun = LoadTexture("characters/Player/Walk_Right.png");
-    Texture2D playerRunUp = LoadTexture("characters/Player/Walk_Up.png");
-    Texture2D playerRunDown = LoadTexture("characters/Player/Walk_Down.png");
-
-
-    // 1 : facing right, -1 : facing left
-    float rightLeft{1.f};
-
-    float playerMovementSpeed{4.0};
-    float playerScale{1.25};
-
-    // animation variables
-    float runningTime{};
-    int frame{};
-    const int maxFrames{6};
-    const float idleUpdateTime{1.f};
-    float updateTime{1.f/12.f};
+    Character adventurer;
+    adventurer.SetScreenPosition(windowWidth, windowHeight);
+    adventurer.SetTextureScale(1.25f);
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -110,53 +119,15 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        Vector2 direction{};
-        if(IsKeyDown(KEY_W)) { direction.y -= 1.0; } // up
-        if(IsKeyDown(KEY_A)) { direction.x -= 1.0; } // left
-        if(IsKeyDown(KEY_S)) { direction.y += 1.0; } // down
-        if(IsKeyDown(KEY_D)) { direction.x += 1.0; } // right
-
-        if(Vector2Length(direction) != 0.0)
-        {
-            if(direction.y < 0 ) { player = playerRunUp; }
-            else if (direction.y > 0) { player = playerRunDown; }
-            else { player = playerRun; }
-            
-            
-            // set map position to map position minus direction
-            
-            mapPosition = Vector2Subtract(mapPosition, Vector2Scale(Vector2Normalize(direction), playerMovementSpeed));
-            
-            // this is the same as the following if/else statement using the ternary operator
-            direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
-            
-            // if(direction.x <0.f) { rightLeft = -1.f; }
-            // else{ rightLeft = 1.f; }
-
-            updateTime = 1.f/12.f;
-        }
-        else
-        {
-            player = playerIdle;
-            updateTime = idleUpdateTime;
-        }
+        // mapPosition = Vector2Negate(adventurer.GetWorldPosition()); works just the same way as scaling the world position by negative one
+        mapPosition = Vector2Scale(adventurer.GetWorldPosition(), -1.f);
 
         // draw the map
         DrawTextureEx(map, mapPosition, 0.0, 1.0, WHITE);
+        
+        adventurer.Tick(GetFrameTime());
 
-        // update animation frame
-        runningTime += GetFrameTime();
-        if(runningTime >= updateTime)
-        {
-            frame++;
-            runningTime = 0.f;
-            if(frame>maxFrames) frame = 0;
-        }
 
-        // draw the player character
-        Rectangle source{frame * (float)player.width/6.f, 0.f, rightLeft * (float)player.width/6.f, (float)player.height};
-        Rectangle destination{playerPosition.x, playerPosition.y, playerScale * (float)player.width/6.0f, playerScale * (float)player.height};
-        DrawTexturePro(player, source, destination, Vector2{}, 0.f, WHITE);
 
         EndDrawing();
     }
