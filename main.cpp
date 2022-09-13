@@ -1,117 +1,20 @@
 #include "raylib.h"
 #include "raymath.h"
-
-class Character
-{
-    public : 
-        Vector2 GetWorldPosition() { return worldPosition; }
-        void SetScreenPosition(int windowWidth, int windowHeight);
-        void SetTextureScale(float textureScale);
-        void Tick(float deltaTime);
-
-    private :
-        Texture2D
-            texture { LoadTexture("characters/Player/Idle_Down.png") } ,
-            idle { LoadTexture("characters/Player/Idle_Down.png") },
-            walk { LoadTexture("characters/Player/Walk_Right.png") },
-            walkUp { LoadTexture("characters/Player/Walk_Up.png") },
-            walkDown { LoadTexture("characters/Player/Walk_Down.png") },
-            run { LoadTexture("characters/Player/Run_Right.png") },
-            runUp { LoadTexture("characters/Player/Run_Up.png") },
-            runDown { LoadTexture("characters/Player/Run_Down.png") };
-        Vector2 screenPosition{}, worldPosition{};
-        float rightLeft{1.f}, runningTime{}, scale{};
-        int frame{};
-        const int maxFrames{6};
-        float updateTime{1.f/12.f}, idleUpdateTime{1.f}, movementSpeed{2.75f}, sprintSpeed{2.f};
-};
-
-void Character::SetScreenPosition(int windowWidth, int windowHeight)
-{
-    screenPosition = 
-    {
-        (float)windowWidth/2.0f - 4.0f * (0.5f * (float)texture.width/6.0f),
-        (float)windowHeight/2.0f - 4.0f * (0.5f * (float)texture.height)
-    };
-}
-
-void Character::SetTextureScale(float textureScale)
-{
-    scale = textureScale;
-}
-
-void Character::Tick(float deltaTime)
-{
-        Vector2 direction{};
-        if(IsKeyDown(KEY_W)) { direction.y -= 1.0; } // up
-        if(IsKeyDown(KEY_A)) { direction.x -= 1.0; } // left
-        if(IsKeyDown(KEY_S)) { direction.y += 1.0; } // down
-        if(IsKeyDown(KEY_D)) { direction.x += 1.0; } // right
-
-        if(Vector2Length(direction) != 0.0)
-        {
-            // set world position to world position plus direction
-            worldPosition = Vector2Add(worldPosition, Vector2Scale(Vector2Normalize(direction), movementSpeed));
-            
-            // this is the same as the following if/else statement using the ternary operator
-            direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
-            // if(direction.x <0.f) { rightLeft = -1.f; }
-            // else{ rightLeft = 1.f; }
-
-            updateTime = 1.f/12.f;
-
-            if(IsKeyDown(KEY_LEFT_SHIFT))
-            {
-                movementSpeed = 2.75 + sprintSpeed;
-                updateTime = 1.f/6.f;
-                if(direction.y < 0 ) { texture = runUp; }
-                else if (direction.y > 0) { texture = runDown; }
-                else { texture = run; }
-            }
-            else
-            {
-                updateTime = 1.f/12.f;
-                movementSpeed = 2.75;
-                if(direction.y < 0 ) { texture = walkUp; }
-                else if (direction.y > 0) { texture = walkDown; }
-                else { texture = walk; }
-            }
-            
-        }
-        else
-        {
-            texture = idle;
-            updateTime = idleUpdateTime;
-        }
-
-        // update animation frame
-        runningTime += deltaTime;
-        if(runningTime >= updateTime)
-        {
-            frame++;
-            runningTime = 0.f;
-            if(frame>maxFrames) frame = 0;
-        }
-
-        // draw the player character
-        Rectangle source{frame * (float)texture.width/6.f, 0.f, rightLeft * (float)texture.width/6.f, (float)texture.height};
-        Rectangle destination{screenPosition.x, screenPosition.y, scale * (float)texture.width/6.0f, scale * (float)texture.height};
-        DrawTexturePro(texture, source, destination, Vector2{}, 0.f, WHITE);
-}
+#include "Character.h"
 
 int main()
 {
-    const int windowWidth{768}, windowHeight{768};
+    const int windowWidth{384}, windowHeight{384};
     const char * windowTitle{"Cynthoran Graveyard"};
 
     InitWindow(windowWidth, windowHeight, windowTitle);
 
     Texture2D map = LoadTexture("tilemaps/Graveyard.png");
     Vector2 mapPosition{0.0,0.0};
+    const float mapScale{1.f};
 
     Character adventurer;
     adventurer.SetScreenPosition(windowWidth, windowHeight);
-    adventurer.SetTextureScale(1.25f);
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -123,11 +26,14 @@ int main()
         mapPosition = Vector2Scale(adventurer.GetWorldPosition(), -1.f);
 
         // draw the map
-        DrawTextureEx(map, mapPosition, 0.0, 1.0, WHITE);
+        DrawTextureEx(map, mapPosition, 0.0, mapScale, WHITE);
         
         adventurer.Tick(GetFrameTime());
-
-
+        // check map bounds
+        if(adventurer.GetWorldPosition().x < 0.f || adventurer.GetWorldPosition().y < 0.f || adventurer.GetWorldPosition().x + windowWidth > map.width * mapScale || adventurer.GetWorldPosition().y + windowHeight > (map.height * mapScale))
+        {
+            adventurer.UndoMovement();
+        }
 
         EndDrawing();
     }
