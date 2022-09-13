@@ -19,8 +19,8 @@ int main()
     Texture2D playerRunDown = LoadTexture("characters/Player/Walk_Down.png");
 
 
-    // 1 : facing right/up, -1 : facing left/down
-    float rightLeft{1.f}, upDown{1.f};
+    // 1 : facing right, -1 : facing left
+    float rightLeft{1.f};
 
     float playerMovementSpeed{4.0};
     float playerScale{1.25};
@@ -29,7 +29,8 @@ int main()
     float runningTime{};
     int frame{};
     const int maxFrames{6};
-    const float updateTime{1.f/12.f};
+    const float idleUpdateTime{1.f};
+    float updateTime{1.f/12.f};
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -59,8 +60,14 @@ int main()
             
             // if(direction.x <0.f) { rightLeft = -1.f; }
             // else{ rightLeft = 1.f; }
+
+            updateTime = 1.f/12.f;
         }
-        else player = playerIdle;
+        else
+        {
+            player = playerIdle;
+            updateTime = idleUpdateTime;
+        }
 
         // draw the map
         DrawTextureEx(map, mapPosition, 0.0, 1.0, WHITE);
