@@ -1,10 +1,19 @@
 #include "raylib.h"
 #include "raymath.h"
 
-class character
+class Character
 {
     public : 
+        Vector2 GetWorldPosition() { return worldPosition; }
+        
+
     private :
+        Texture2D texture, idle, run;
+        Vector2 screenPosition, worldPosition;
+        float rightLeft{1.f}, runningTime{};
+        int frame{};
+        const int maxFrames{6};
+        float updateTime{1.f/12.f}, idleTime{1.f};
 };
 
 
