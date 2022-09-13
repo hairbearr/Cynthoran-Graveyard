@@ -5,17 +5,73 @@ class Character
 {
     public : 
         Vector2 GetWorldPosition() { return worldPosition; }
-        
+        void SetScreenPosition(int windowWidth, int windowHeight);
+        void Tick(float deltaTime);
+
 
     private :
-        Texture2D texture, idle, run;
+        Texture2D
+            texture { LoadTexture("characters/Player/Idle_Down.png") } ,
+            idle { LoadTexture("characters/Player/Idle_Down.png") },
+            run { LoadTexture("characters/Player/Walk_Right.png") },
+            runUp { LoadTexture("characters/Player/Walk_Up.png") },
+            runDown { LoadTexture("characters/Player/Walk_Down.png") };
         Vector2 screenPosition, worldPosition;
         float rightLeft{1.f}, runningTime{};
         int frame{};
         const int maxFrames{6};
-        float updateTime{1.f/12.f}, idleTime{1.f};
+        float updateTime{1.f/12.f}, idleUpdateTime{1.f};
+        const float movementSpeed{4.f};
 };
 
+void Character::SetScreenPosition(int windowWidth, int windowHeight)
+{
+    screenPosition = 
+    {
+        (float)windowWidth/2.0f - 4.0f * (0.5f * (float)texture.width/6.0f),
+        (float)windowHeight/2.0f - 4.0f * (0.5f * (float)texture.height)
+    };
+}
+
+void Character::Tick(float deltaTime)
+{
+     Vector2 direction{};
+        if(IsKeyDown(KEY_W)) { direction.y -= 1.0; } // up
+        if(IsKeyDown(KEY_A)) { direction.x -= 1.0; } // left
+        if(IsKeyDown(KEY_S)) { direction.y += 1.0; } // down
+        if(IsKeyDown(KEY_D)) { direction.x += 1.0; } // right
+
+        if(Vector2Length(direction) != 0.0)
+        {
+            // set world position to world position plus direction
+            worldPosition = Vector2Add(worldPosition, Vector2Scale(Vector2Normalize(direction), movementSpeed));
+            
+            // this is the same as the following if/else statement using the ternary operator
+            direction.x < 0.f ? rightLeft = -1.f : rightLeft = 1.f;
+            // if(direction.x <0.f) { rightLeft = -1.f; }
+            // else{ rightLeft = 1.f; }
+
+            updateTime = 1.f/12.f;
+
+            if(direction.y < 0 ) { texture = runUp; }
+            else if (direction.y > 0) { texture = runDown; }
+            else { texture = run; }
+        }
+        else
+        {
+            texture = idle;
+            updateTime = idleUpdateTime;
+        }
+
+        // update animation frame
+        runningTime += deltaTime;
+        if(runningTime >= updateTime)
+        {
+            frame++;
+            runningTime = 0.f;
+            if(frame>maxFrames) frame = 0;
+        }
+}
 
 int main()
 {
