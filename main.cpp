@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "Character.h"
+#include "Prop.h"
 
 int main()
 {
@@ -15,6 +16,7 @@ int main()
 
     Character adventurer { windowWidth, windowHeight, 1.f };
 
+    Prop rock{Vector2{0.f,0.f}, 1.f, LoadTexture("props/Rock_1.png")};
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -28,6 +30,8 @@ int main()
         // draw the map
         DrawTextureEx(map, mapPosition, 0.0, mapScale, WHITE);
         
+        rock.Render(adventurer.GetWorldPosition());
+
         adventurer.Tick(GetFrameTime());
         // check map bounds
         if  (
