@@ -19,8 +19,16 @@ void Character::UndoMovement()
     worldPosition = worldPositionLastFrame;
 }
 
+Rectangle Character::GetCollisionRectangle()
+{
+    //DrawRectangle(screenPosition.x+ (width/4 * scale), screenPosition.y + (height/4 * scale), (width/2 * scale), (height/2 * scale), BLUE);
+    return Rectangle { screenPosition.x + (width/4 * scale), screenPosition.y + (height/4 * scale), (width/2 * scale), (height/2 * scale) };
+}
+
 void Character::Tick(float deltaTime)
 {
+        worldPositionLastFrame = worldPosition;
+        
         Vector2 direction{};
         if(IsKeyDown(KEY_W)) { direction.y -= 1.0; } // up
         if(IsKeyDown(KEY_A)) { direction.x -= 1.0; } // left
@@ -29,8 +37,6 @@ void Character::Tick(float deltaTime)
 
         if(Vector2Length(direction) != 0.0)
         {
-
-            
             // set world position to world position plus direction
             worldPosition = Vector2Add(worldPosition, Vector2Scale(Vector2Normalize(direction), movementSpeed));
             

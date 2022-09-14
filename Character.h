@@ -7,6 +7,7 @@ class Character
         Vector2 GetWorldPosition() { return worldPosition; }
         void UndoMovement();
         void Tick(float deltaTime);
+        Rectangle GetCollisionRectangle();
         
     private :
         Texture2D

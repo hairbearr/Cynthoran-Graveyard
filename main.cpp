@@ -16,7 +16,13 @@ int main()
 
     Character adventurer { windowWidth, windowHeight, 1.f };
 
-    Prop rock{Vector2{0.f,0.f}, 1.f, LoadTexture("props/Rock_1.png")};
+    
+
+    Prop props[2]
+    {
+        Prop {Vector2{600.f,300.f}, 1.f, LoadTexture("props/Rock_1.png")},
+        Prop {Vector2{400.f,500.f}, 1.f, LoadTexture("props/Fountain.png")}
+    };
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -30,7 +36,11 @@ int main()
         // draw the map
         DrawTextureEx(map, mapPosition, 0.0, mapScale, WHITE);
         
-        rock.Render(adventurer.GetWorldPosition());
+        // draw the props
+        for(auto prop : props)
+        {
+            prop.Render(adventurer.GetWorldPosition());
+        }
 
         adventurer.Tick(GetFrameTime());
         // check map bounds
@@ -42,6 +52,15 @@ int main()
             )
         {
             adventurer.UndoMovement();
+        }
+
+        // check prop collisions
+        for ( auto prop : props)
+        {
+            if(CheckCollisionRecs(prop.GetCollisionRectangle(adventurer.GetWorldPosition()), adventurer.GetCollisionRectangle()))
+            {
+                adventurer.UndoMovement();
+            }
         }
 
         EndDrawing();
