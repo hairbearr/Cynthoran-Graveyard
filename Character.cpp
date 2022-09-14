@@ -2,19 +2,15 @@
 #include "raymath.h"
 
 
-Character::Character()
+Character::Character(int windowWidth, int windowHeight, float playerScale)
 {
+    scale = playerScale;
     width = texture.width / maxFrames;
     height = texture.height;
-}
-
-void Character::SetScreenPosition(int windowWidth, int windowHeight)
-{
-    float scale = 1.0f;
-    screenPosition = 
+    screenPosition =
     {
-        (float)windowWidth/2.0f - scale * (0.5f * width),
-        (float)windowHeight/2.0f - scale * (0.5f * height)
+        static_cast<float>(windowWidth) / 2.0f - scale * (0.5f * width),
+        static_cast<float>(windowHeight)/ 2.0f - scale * (0.5f * height)
     };
 }
 

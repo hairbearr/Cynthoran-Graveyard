@@ -4,7 +4,7 @@
 
 int main()
 {
-    const int windowWidth{384}, windowHeight{384};
+    const int windowWidth{854}, windowHeight{480};
     const char * windowTitle{"Cynthoran Graveyard"};
 
     InitWindow(windowWidth, windowHeight, windowTitle);
@@ -13,8 +13,8 @@ int main()
     Vector2 mapPosition{0.0,0.0};
     const float mapScale{1.f};
 
-    Character adventurer;
-    adventurer.SetScreenPosition(windowWidth, windowHeight);
+    Character adventurer { windowWidth, windowHeight, 1.f };
+
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
@@ -30,7 +30,12 @@ int main()
         
         adventurer.Tick(GetFrameTime());
         // check map bounds
-        if(adventurer.GetWorldPosition().x < 0.f || adventurer.GetWorldPosition().y < 0.f || adventurer.GetWorldPosition().x + windowWidth > map.width * mapScale || adventurer.GetWorldPosition().y + windowHeight > (map.height * mapScale))
+        if  (
+                adventurer.GetWorldPosition().x < 0.f - (windowWidth/2) ||
+                adventurer.GetWorldPosition().y < 0.f - (windowHeight/2) ||
+                adventurer.GetWorldPosition().x + windowWidth > (map.width + (windowWidth/2)) * mapScale ||
+                adventurer.GetWorldPosition().y + windowHeight > ((map.height + (windowHeight/2)) * mapScale)
+            )
         {
             adventurer.UndoMovement();
         }

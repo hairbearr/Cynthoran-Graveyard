@@ -3,9 +3,8 @@
 class Character
 {
     public : 
-        Character();
+        Character(int windowWidth, int windowHeight, float playerScale);
         Vector2 GetWorldPosition() { return worldPosition; }
-        void SetScreenPosition(int windowWidth, int windowHeight);
         void UndoMovement();
         void Tick(float deltaTime);
         
@@ -21,5 +20,5 @@ class Character
             runDown { LoadTexture("characters/Player/Run_Down.png") };
         Vector2 screenPosition{}, worldPosition{}, worldPositionLastFrame{};
         int frame{}, maxFrames{6};
-        float rightLeft{1.f}, runningTime{}, scale{1.25f}, updateTime{1.f/12.f}, idleUpdateTime{1.f}, movementSpeed{2.75f}, sprintSpeed{2.f}, width{}, height{};
+        float rightLeft{1.f}, runningTime{}, scale{1.f}, updateTime{1.f/12.f}, idleUpdateTime{1.f}, movementSpeed{2.75f}, sprintSpeed{2.f}, width{}, height{};
 };
