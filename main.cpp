@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include "Character.h"
 #include "Prop.h"
+#include "Enemy.h"
 
 int main()
 {
@@ -16,7 +17,10 @@ int main()
 
     Character adventurer { windowWidth, windowHeight, 1.f };
 
-    
+    Enemy enemies[1]
+    {
+        Enemy {Vector2{300.f, 400.f}, 1.f, LoadTexture("characters/Slime/slime_idle.png"), LoadTexture("characters/slime/slime_run.png") }
+    };
 
     Prop props[2]
     {
@@ -61,6 +65,11 @@ int main()
             {
                 adventurer.UndoMovement();
             }
+        }
+
+        for(auto enemy : enemies)
+        {
+            enemy.Tick(GetFrameTime());
         }
 
         EndDrawing();
