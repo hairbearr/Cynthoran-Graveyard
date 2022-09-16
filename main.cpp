@@ -17,15 +17,23 @@ int main()
 
     Character adventurer { windowWidth, windowHeight, 1.f };
 
-    Enemy enemies[1]
-    {
-        Enemy {Vector2{300.f, 400.f}, 1.f, LoadTexture("characters/Slime/slime_idle.png"), LoadTexture("characters/slime/slime_run.png") }
-    };
+    // Enemy enemies[1]
+    // {
+    //     Enemy {Vector2{300.f, 400.f}, 1.f, LoadTexture("characters/Slime/slime_idle.png"), LoadTexture("characters/Slime/slime_run.png") }
+    // };
 
     Prop props[2]
     {
         Prop {Vector2{600.f,300.f}, 1.f, LoadTexture("props/Rock_1.png")},
         Prop {Vector2{400.f,500.f}, 1.f, LoadTexture("props/Fountain.png")}
+    };
+
+    Enemy slime
+    {
+        Vector2{300.f, 400.f},
+        1.f,
+        LoadTexture("characters/Slime/slime_idle.png"),
+        LoadTexture("characters/Slime/slime_run.png")
     };
 
     SetTargetFPS(60);
@@ -67,10 +75,12 @@ int main()
             }
         }
 
-        for(auto enemy : enemies)
-        {
-            enemy.Tick(GetFrameTime());
-        }
+        // for(auto enemy : enemies)
+        // {
+        //     enemy.Tick(GetFrameTime());
+        // }
+
+        slime.Tick(GetFrameTime());
 
         EndDrawing();
     }

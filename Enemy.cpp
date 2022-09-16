@@ -1,7 +1,11 @@
 #include "Enemy.h"
 
 Enemy::Enemy(Vector2 position, float enemyScale, Texture2D idleTexture, Texture2D runTexture) :
-        worldPosition(position), texture(idleTexture), idle(idleTexture), run(runTexture), scale(enemyScale)
+        worldPosition(position),
+        scale(enemyScale),
+        texture(idleTexture),
+        idle(idleTexture),
+        run(runTexture)
     {
         width = texture.width / maxFrames;
         height = texture.height;

@@ -5,14 +5,14 @@ class Enemy
 
 public:
     Enemy(Vector2 position, float enemyScale, Texture2D idleTexture, Texture2D runTexture);
-    Vector2 GetWorldPosition() {return worldPosition; }
-    void UndoMovement();
+    Vector2 GetWorldPosition() { return worldPosition; }
     void Tick(float deltaTime);
+    void UndoMovement();
     Rectangle GetCollisionRectangle();
 
 private:
     Texture2D
-        texture {LoadTexture("characters/Slime/slime_idle.png")},
+        texture { LoadTexture("characters/Slime/slime_idle.png")},
         idle {LoadTexture("characters/Slime/slime_idle.png")},
         run {LoadTexture("characters/Slime/slime_run.png")};
 
