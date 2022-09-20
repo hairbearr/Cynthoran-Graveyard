@@ -1,6 +1,3 @@
-#ifndef CHARACTER_H
-#define CHARACTER_H
-
 #include "Character.h"
 #include "raymath.h"
 
@@ -61,5 +58,3 @@ void Character::Tick(float deltaTime)
     }
         
 }
-
-#endif
