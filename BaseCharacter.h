@@ -10,6 +10,7 @@ class BaseCharacter
     Vector2 GetWorldPosition() { return worldPosition; }
     void UndoMovement();
     Rectangle GetCollisionRectangle();
+    virtual void Tick(float deltaTime);
     
 
     protected:
