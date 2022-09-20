@@ -35,6 +35,7 @@ int main()
         LoadTexture("characters/Slime/slime_idle.png"),
         LoadTexture("characters/Slime/slime_run.png")
     };
+    slime.setTarget(&adventurer);
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
