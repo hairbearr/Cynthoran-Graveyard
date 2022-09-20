@@ -14,4 +14,4 @@ class Character : public BaseCharacter
         
 };
 
-#endif CHARACTER_H
+#endif

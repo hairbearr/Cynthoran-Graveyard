@@ -9,6 +9,7 @@ public :
 
 private :
     Texture2D texture{};
-    Vector2 worldPosition{};
     float scale{};
+    Vector2 worldPosition{};
+    
 };

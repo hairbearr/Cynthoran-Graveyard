@@ -11,6 +11,7 @@ class BaseCharacter
     void UndoMovement();
     Rectangle GetCollisionRectangle();
     virtual void Tick(float deltaTime);
+    Vector2 GetScreenPosition(){ return screenPosition; }
     
 
     protected:
