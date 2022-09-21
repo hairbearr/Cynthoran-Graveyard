@@ -8,6 +8,7 @@ Enemy::Enemy(Vector2 position, float enemyScale, Texture2D idleTexture, Texture2
         texture = idleTexture;
         idle = idleTexture;
         run = runTexture;
+        isPlayer = false;
 
         width = texture.width / maxFrames;
         height = texture.height;
@@ -18,14 +19,11 @@ void Enemy::Tick(float deltaTime)
     {
 
         // Get toTarget
-        Vector2 toTarget = Vector2Subtract(target->GetScreenPosition(), screenPosition);
-        // Normalize toTarget
-        toTarget = Vector2Normalize(toTarget);
-        // Multiply toTarget by Speed
-        toTarget = Vector2Scale(toTarget, movementSpeed);
-        // Move Enemy (set world position)
-        worldPosition = Vector2Add(worldPosition, toTarget);
-
-        screenPosition = Vector2Subtract(worldPosition, target->GetWorldPosition());
+        velocity = Vector2Subtract(target->GetScreenPosition(), GetScreenPosition());
         BaseCharacter::Tick(deltaTime);
+    }
+
+    Vector2 Enemy::GetScreenPosition()
+    {
+        return Vector2Subtract(worldPosition, target->GetWorldPosition());
     }

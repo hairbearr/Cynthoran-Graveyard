@@ -11,7 +11,7 @@ class BaseCharacter
     void UndoMovement();
     Rectangle GetCollisionRectangle();
     virtual void Tick(float deltaTime);
-    Vector2 GetScreenPosition(){ return screenPosition; }
+    virtual Vector2 GetScreenPosition() = 0;
     
 
     protected:
@@ -26,10 +26,10 @@ class BaseCharacter
             runUp { LoadTexture("characters/Player/Run_Up.png") },
             runDown { LoadTexture("characters/Player/Run_Down.png") };
 
-    Vector2 screenPosition{}, worldPosition{}, worldPositionLastFrame{};
+    Vector2 worldPosition{}, worldPositionLastFrame{}, velocity{};
     int frame{}, maxFrames{6};
     float rightLeft{1.f}, runningTime{}, scale{1.f}, updateTime{1.f/12.f}, idleUpdateTime{1.f}, movementSpeed{}, sprintSpeed{1.f}, width{}, height{};
-
+    bool isPlayer{};
     private:
 };
 
