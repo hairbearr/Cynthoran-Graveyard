@@ -83,6 +83,14 @@ int main()
 
         slime.Tick(GetFrameTime());
 
+        if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            if(CheckCollisionRecs(slime.GetCollisionRectangle(), adventurer.GetCollisionRectangle()))
+            {
+                slime.SetAlive(false);
+            }
+        }
+
         EndDrawing();
     }
     CloseWindow();

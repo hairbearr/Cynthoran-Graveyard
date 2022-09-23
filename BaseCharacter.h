@@ -12,6 +12,8 @@ class BaseCharacter
     Rectangle GetCollisionRectangle();
     virtual void Tick(float deltaTime);
     virtual Vector2 GetScreenPosition() = 0;
+    bool GetAlive() {return alive;}
+    void SetAlive(bool isAlive) { alive = isAlive;}
     
 
     protected:
@@ -31,6 +33,8 @@ class BaseCharacter
     float rightLeft{1.f}, runningTime{}, scale{1.f}, updateTime{1.f/12.f}, idleUpdateTime{1.f}, movementSpeed{}, sprintSpeed{1.f}, width{}, height{};
     bool isPlayer{};
     private:
+
+    bool alive{true};
 };
 
 #endif
