@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "Prop.h"
 #include "Enemy.h"
+#include <string>
 
 int main()
 {
@@ -55,6 +56,19 @@ int main()
             prop.Render(adventurer.GetWorldPosition());
         }
 
+        if(!adventurer.GetAlive()) // character is not alive
+        {
+            DrawText("Game Over!", 327.f, 240.f, 40, RED);
+            EndDrawing();
+            continue;
+        }
+        else // character is alive
+        {
+            std::string adventurerHealth = "Health: ";
+            adventurerHealth.append(std::to_string(adventurer.GetHealth()), 0, 5);
+            DrawText(adventurerHealth.c_str(), 35.f, 25.f, 20, RED);
+        }
+
         adventurer.Tick(GetFrameTime());
         // check map bounds
         if  (
@@ -75,6 +89,7 @@ int main()
                 adventurer.UndoMovement();
             }
         }
+        
 
         // for(auto enemy : enemies)
         // {
