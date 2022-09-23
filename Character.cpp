@@ -83,3 +83,12 @@ void Character::Tick(float deltaTime)
 
     DrawRectangleLines(weaponCollisionRectangle.x, weaponCollisionRectangle.y, weaponCollisionRectangle.width, weaponCollisionRectangle.height, RED);
 }
+
+void Character::TakeDamage(float damage)
+{
+    health -= damage;
+    if(health <=0.f)
+    {
+        SetAlive(false);
+    }
+}
