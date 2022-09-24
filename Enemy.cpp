@@ -21,6 +21,7 @@ void Enemy::Tick(float deltaTime)
 
         // Get toTarget
         velocity = Vector2Subtract(target->GetScreenPosition(), GetScreenPosition());
+        if(Vector2Length(velocity) < attackRadius || Vector2Length(velocity) > aggroRadius) velocity = {};
         BaseCharacter::Tick(deltaTime);
 
         if(CheckCollisionRecs(target->GetCollisionRectangle(), GetCollisionRectangle()))

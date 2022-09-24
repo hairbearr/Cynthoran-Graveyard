@@ -13,5 +13,5 @@ public:
 
 private:
     Character* target;
-    float damagePerSecond{10.f};
+    float damagePerSecond{10.f}, attackRadius{25.f}, aggroRadius{350.f};
 };
